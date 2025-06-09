@@ -168,25 +168,25 @@ class NodePalette(ctk.CTkFrame):
         )
         desc_label.pack(anchor="w")
         
-        # Drag button
-        drag_btn = ctk.CTkButton(
+        # Add button
+        add_btn = ctk.CTkButton(
             info_frame,
-            text="⋮⋮",
-            width=30,
+            text="Add",
+            width=50,
             height=40,
             command=lambda: self.on_node_drag_start(node_type)
         )
-        drag_btn.pack(side="right", padx=5)
+        add_btn.pack(side="right", padx=5)
         
         # Add hover effects
-        self._setup_node_button_hover(button_frame, drag_btn)
+        self._setup_node_button_hover(button_frame, add_btn)
         
         # Store button reference
         if "buttons" not in self.node_buttons:
             self.node_buttons["buttons"] = {}
         self.node_buttons["buttons"][node_type] = {
             "frame": button_frame,
-            "button": drag_btn,
+            "button": add_btn,
             "node_info": node_info
         }
     

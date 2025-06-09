@@ -38,6 +38,7 @@ class WorkflowCanvas(ctk.CTkFrame):
         self.dragging_node: Optional[str] = None
         self.connecting_from: Optional[Tuple[str, str]] = None  # (node_id, pin_type)
         self.creating_node_type: Optional[str] = None
+        self.hint_text_id: Optional[int] = None
         
         # Canvas properties
         self.zoom_level = 1.0
@@ -159,6 +160,9 @@ class WorkflowCanvas(ctk.CTkFrame):
         """Start creating a new node of the specified type."""
         self.creating_node_type = node_type
         self.canvas.configure(cursor="crosshair")
+        
+        # Add visual feedback on canvas
+        self._show_creation_hint(node_type)
     
     def _on_click(self, event):
         """Handle mouse click events."""
@@ -170,6 +174,7 @@ class WorkflowCanvas(ctk.CTkFrame):
             self._create_node_at_position(self.creating_node_type, x, y)
             self.creating_node_type = None
             self.canvas.configure(cursor="")
+            self._hide_creation_hint()
             return
         
         # Check what was clicked
