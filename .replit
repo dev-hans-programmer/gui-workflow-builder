@@ -1,0 +1,40 @@
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Workflow Builder"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "workflow_builder_app"
+
+[[workflows.workflow]]
+name = "Workflow Builder"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "workflow_builder_app"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /tmp && pip install customtkinter requests jsonschema && python main.py"
+
+[deployment]
+run = ["sh", "-c", "python main.py"]
