@@ -10,7 +10,7 @@ from datetime import datetime
 import traceback
 import copy
 
-from nodes.node_factory import NodeFactory
+# Import moved to avoid circular dependency
 from utils.geometry import Point
 
 class ExecutionContext:
@@ -48,7 +48,7 @@ class WorkflowExecution:
     """Handles execution of a single workflow with dependency management."""
     
     def __init__(self, execution_id: str, workflow_data: Dict, 
-                 node_factory: NodeFactory,
+                 node_factory: Any,
                  on_log: Optional[Callable] = None,
                  on_node_update: Optional[Callable] = None):
         """Initialize workflow execution."""
@@ -295,14 +295,14 @@ class WorkflowExecution:
             "current_node": self.current_node_id
         }
     
-    def get_node_output(self, node_id: str, pin_name: str = None) -> Any:
+    def get_node_output(self, node_id: str, pin_name: Optional[str] = None) -> Any:
         """Get output data from a specific node."""
         if node_id not in self.node_outputs:
             return None
         
         node_outputs = self.node_outputs[node_id]
         
-        if pin_name:
+        if pin_name is not None:
             return node_outputs.get(pin_name)
         else:
             return node_outputs

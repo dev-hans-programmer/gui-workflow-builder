@@ -9,7 +9,7 @@ import time
 import uuid
 from datetime import datetime
 
-from workflow.execution import ExecutionContext
+# Import moved to method level to avoid circular dependency
 
 class NodePin:
     """Represents an input or output pin on a node."""
@@ -64,7 +64,7 @@ class NodeSchema:
     
     def add_property(self, name: str, prop_type: str, title: str = "",
                     description: str = "", default_value: Any = None,
-                    required: bool = False, options: List[str] = None) -> 'NodeSchema':
+                    required: bool = False, options: Optional[List[str]] = None) -> 'NodeSchema':
         """Add a property to the schema."""
         self.properties[name] = {
             "type": prop_type,
@@ -130,11 +130,11 @@ class BaseNode(ABC):
         pass
     
     @abstractmethod
-    def execute(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def execute(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         """Execute the node with given inputs and context."""
         pass
     
-    def pre_execute(self, inputs: Dict[str, Any], context: ExecutionContext):
+    def pre_execute(self, inputs: Dict[str, Any], context: Any):
         """Called before node execution. Override for custom pre-processing."""
         self.execution_start_time = datetime.now()
         self.last_error = None
@@ -142,7 +142,7 @@ class BaseNode(ABC):
         # Validate inputs
         self._validate_inputs(inputs)
     
-    def post_execute(self, outputs: Dict[str, Any], context: ExecutionContext):
+    def post_execute(self, outputs: Dict[str, Any], context: Any):
         """Called after node execution. Override for custom post-processing."""
         self.execution_end_time = datetime.now()
         
@@ -192,12 +192,12 @@ class BaseNode(ABC):
             return (self.execution_end_time - self.execution_start_time).total_seconds()
         return None
     
-    def log(self, level: str, message: str, context: ExecutionContext):
+    def log(self, level: str, message: str, context: Any):
         """Log a message during execution."""
         # This would typically integrate with the logging system
         print(f"[{self.node_id}] {level}: {message}")
     
-    def handle_error(self, error: Exception, context: ExecutionContext):
+    def handle_error(self, error: Exception, context: Any):
         """Handle errors during execution."""
         self.last_error = str(error)
         self.log("ERROR", f"Node execution failed: {error}", context)
@@ -276,7 +276,7 @@ class SimpleNode(BaseNode):
         """Initialize the simple node."""
         super().__init__(node_id, node_data)
     
-    def execute(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def execute(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         """Execute the node with pre/post processing."""
         try:
             self.pre_execute(inputs, context)
@@ -285,8 +285,9 @@ class SimpleNode(BaseNode):
             return outputs
         except Exception as e:
             self.handle_error(e, context)
+            return {}  # Return empty dict on error
     
     @abstractmethod
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         """Process the inputs and return outputs. Override this method."""
         pass
