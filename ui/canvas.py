@@ -282,6 +282,33 @@ class WorkflowCanvas(ctk.CTkFrame):
         # Mark as changed
         self._mark_changed()
     
+    def _show_creation_hint(self, node_type: str):
+        """Show visual hint for node creation."""
+        # Remove any existing hint
+        if self.hint_text_id:
+            self.canvas.delete(self.hint_text_id)
+        
+        # Create hint text in center of canvas
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
+        x = canvas_width // 2
+        y = canvas_height // 2
+        
+        hint_text = f"Click on the canvas to place {node_type} node"
+        self.hint_text_id = self.canvas.create_text(
+            x, y,
+            text=hint_text,
+            font=("Arial", 16, "bold"),
+            fill="#888888",
+            tags="hint"
+        )
+    
+    def _hide_creation_hint(self):
+        """Hide the creation hint."""
+        if self.hint_text_id:
+            self.canvas.delete(self.hint_text_id)
+            self.hint_text_id = None
+    
     def _draw_node(self, node_id: str):
         """Draw a node on the canvas with modern styling."""
         node = self.nodes[node_id]
