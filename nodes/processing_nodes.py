@@ -14,7 +14,7 @@ import operator
 import ast
 
 from nodes.base_node import BaseNode, NodeSchema, SimpleNode
-from workflow.execution import ExecutionContext
+from workflow.execution import Any
 
 class TextProcessorNode(SimpleNode):
     """Node for text processing operations."""
@@ -37,7 +37,7 @@ class TextProcessorNode(SimpleNode):
                 .add_property("regex_pattern", "string", "Regex Pattern",
                             "Regular expression pattern", ""))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         text = self.get_input_value(inputs, "text", "")
         operation = self.get_property("operation", "uppercase")
         find_text = self.get_property("find_text", "")
@@ -99,7 +99,7 @@ class MathNode(SimpleNode):
                 .add_property("precision", "number", "Decimal Precision",
                             "Number of decimal places", 2))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         a = self.get_input_value(inputs, "a", 0)
         b = self.get_input_value(inputs, "b", 0)
         operation = self.get_property("operation", "add")
@@ -173,7 +173,7 @@ class FilterNode(SimpleNode):
                 .add_property("filter_key", "string", "Filter Key",
                             "Key to filter on (for objects)", ""))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data")
         filter_type = self.get_property("filter_type", "contains")
         filter_value = self.get_property("filter_value", "")
@@ -311,7 +311,7 @@ class TransformNode(SimpleNode):
                 .add_property("json_indent", "number", "JSON Indent",
                             "Indentation for JSON formatting", 2))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data")
         transform_type = self.get_property("transform_type", "json_to_string")
         separator = self.get_property("separator", ",")
@@ -431,7 +431,7 @@ class ConditionalNode(SimpleNode):
                 .add_property("case_sensitive", "boolean", "Case Sensitive",
                             "Case sensitive comparison for strings", True))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         value_a = self.get_input_value(inputs, "value_a")
         value_b = self.get_input_value(inputs, "value_b")
         true_value = self.get_input_value(inputs, "true_value", True)
@@ -503,7 +503,7 @@ class DelayNode(SimpleNode):
                 .add_property("max_delay", "number", "Max Delay",
                             "Maximum delay for random type", 5.0))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data")
         delay_seconds = self.get_property("delay_seconds", 1.0)
         delay_type = self.get_property("delay_type", "fixed")
@@ -543,7 +543,7 @@ class ScriptNode(SimpleNode):
                 .add_property("timeout", "number", "Timeout",
                             "Script timeout in seconds", 10))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data")
         script = self.get_property("script", "result = data")
         timeout = self.get_property("timeout", 10)
@@ -631,7 +631,7 @@ class AggregateNode(SimpleNode):
                 .add_property("separator", "string", "Separator",
                             "Separator for join operation", ", "))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data", [])
         operation = self.get_property("operation", "sum")
         field = self.get_property("field", "")

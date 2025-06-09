@@ -71,7 +71,7 @@ class NodeSchema:
             "title": title or name.replace("_", " ").title(),
             "description": description,
             "default": default_value,
-            "options": options or []
+            "options": options if options is not None else []
         }
         
         if required:
@@ -230,9 +230,9 @@ class BaseNode(ABC):
             "properties_count": len(self.properties)
         }
     
-    def clone(self, new_id: str = None) -> 'BaseNode':
+    def clone(self, new_id: Optional[str] = None) -> 'BaseNode':
         """Create a copy of this node with a new ID."""
-        new_node_id = new_id or str(uuid.uuid4())
+        new_node_id = new_id if new_id is not None else str(uuid.uuid4())
         
         # Deep copy node data
         import copy

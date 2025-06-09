@@ -12,7 +12,7 @@ from datetime import datetime
 import threading
 
 from nodes.base_node import BaseNode, NodeSchema, SimpleNode
-from workflow.execution import ExecutionContext
+# Import moved to avoid circular dependency
 
 class TextInputNode(SimpleNode):
     """Node for inputting static text data."""
@@ -25,7 +25,7 @@ class TextInputNode(SimpleNode):
                 .add_property("text", "text", "Input Text", 
                             "Enter the text to output", "", True))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         text = self.get_property("text", "")
         return self.create_output(text=text)
 
@@ -40,7 +40,7 @@ class NumberInputNode(SimpleNode):
                 .add_property("value", "number", "Number Value",
                             "Enter the numeric value", 0, True))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         value = self.get_property("value", 0)
         return self.create_output(number=value)
 
@@ -59,7 +59,7 @@ class FileInputNode(SimpleNode):
                 .add_property("encoding", "string", "Encoding",
                             "Text encoding (e.g., utf-8)", "utf-8"))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         file_path = self.get_property("file_path", "")
         encoding = self.get_property("encoding", "utf-8")
         
@@ -107,7 +107,7 @@ class APIInputNode(SimpleNode):
                 .add_property("timeout", "number", "Timeout",
                             "Request timeout in seconds", 30))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         url = self.get_property("url", "")
         method = self.get_property("method", "GET").upper()
         headers_text = self.get_property("headers", "{}")
@@ -166,7 +166,7 @@ class DatabaseInputNode(SimpleNode):
                 .add_property("parameters", "text", "Parameters",
                             "JSON object with query parameters", "{}"))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         connection_string = self.get_property("connection_string", "")
         query = self.get_property("query", "")
         parameters_text = self.get_property("parameters", "{}")
@@ -206,7 +206,7 @@ class TimerNode(SimpleNode):
                 .add_property("max_ticks", "number", "Max Ticks",
                             "Maximum number of ticks (0 = unlimited)", 0))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         interval = self.get_property("interval", 1.0)
         max_ticks = self.get_property("max_ticks", 0)
         
@@ -245,7 +245,7 @@ class VariableInputNode(SimpleNode):
                 .add_property("default_value", "string", "Default Value",
                             "Default value if variable doesn't exist", ""))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         variable_name = self.get_property("variable_name", "")
         default_value = self.get_property("default_value", "")
         
@@ -276,7 +276,7 @@ class JSONInputNode(SimpleNode):
                 .add_property("json_text", "text", "JSON Data",
                             "JSON formatted text", "{}", True))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         json_text = self.get_property("json_text", "{}")
         
         try:
@@ -306,7 +306,7 @@ class EnvironmentVariableNode(SimpleNode):
                 .add_property("default_value", "string", "Default Value",
                             "Default value if variable doesn't exist", ""))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         var_name = self.get_property("var_name", "")
         default_value = self.get_property("default_value", "")
         

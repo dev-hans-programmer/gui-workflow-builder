@@ -15,7 +15,7 @@ import csv
 import io
 
 from nodes.base_node import BaseNode, NodeSchema, SimpleNode
-from workflow.execution import ExecutionContext
+from workflow.execution import Any
 
 class TextOutputNode(SimpleNode):
     """Node for outputting text data."""
@@ -35,7 +35,7 @@ class TextOutputNode(SimpleNode):
                             "Output format", "plain", True,
                             ["plain", "uppercase", "lowercase", "title"]))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         text = self.get_input_value(inputs, "text", "")
         prefix = self.get_property("prefix", "")
         suffix = self.get_property("suffix", "")
@@ -77,7 +77,7 @@ class FileOutputNode(SimpleNode):
                 .add_property("append", "boolean", "Append",
                             "Append to existing file", False))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data")
         file_path = self.get_property("file_path", "")
         format_type = self.get_property("format", "text")
@@ -165,7 +165,7 @@ class APIOutputNode(SimpleNode):
                 .add_property("data_key", "string", "Data Key",
                             "Key name for data in request body", "data"))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data")
         url = self.get_property("url", "")
         method = self.get_property("method", "POST").upper()
@@ -231,7 +231,7 @@ class DatabaseOutputNode(SimpleNode):
                 .add_property("key_field", "string", "Key Field",
                             "Field to use as key for updates", "id"))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         data = self.get_input_value(inputs, "data")
         connection_string = self.get_property("connection_string", "")
         table_name = self.get_property("table_name", "")
@@ -286,7 +286,7 @@ class EmailNode(SimpleNode):
                 .add_property("use_tls", "boolean", "Use TLS",
                             "Use TLS encryption", True))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         subject = self.get_input_value(inputs, "subject", "No Subject")
         body = self.get_input_value(inputs, "body", "")
         attachments = self.get_input_value(inputs, "attachments", [])
@@ -363,7 +363,7 @@ class NotificationNode(SimpleNode):
                 .add_property("timeout", "number", "Timeout",
                             "Notification timeout in seconds", 5))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         message = self.get_input_value(inputs, "message", "")
         title = self.get_input_value(inputs, "title", "Workflow Notification")
         notification_type = self.get_property("notification_type", "info")
@@ -445,7 +445,7 @@ class LogOutputNode(SimpleNode):
                 .add_property("include_data", "boolean", "Include Data",
                             "Include additional data in log", True))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         message = self.get_input_value(inputs, "message", "")
         data = self.get_input_value(inputs, "data")
         log_level = self.get_property("log_level", "INFO")
@@ -496,7 +496,7 @@ class WebhookNode(SimpleNode):
                 .add_property("timeout", "number", "Timeout",
                             "Request timeout in seconds", 30))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         payload = self.get_input_value(inputs, "payload")
         webhook_url = self.get_property("webhook_url", "")
         secret = self.get_property("secret", "")
@@ -564,7 +564,7 @@ class VariableOutputNode(SimpleNode):
                 .add_property("overwrite", "boolean", "Overwrite",
                             "Overwrite existing variable", True))
     
-    def process(self, inputs: Dict[str, Any], context: ExecutionContext) -> Dict[str, Any]:
+    def process(self, inputs: Dict[str, Any], context: Any) -> Dict[str, Any]:
         value = self.get_input_value(inputs, "value")
         variable_name = self.get_property("variable_name", "")
         overwrite = self.get_property("overwrite", True)
