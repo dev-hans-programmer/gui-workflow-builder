@@ -5,9 +5,12 @@ Handles application lifecycle, theme management, and component coordination.
 
 import customtkinter as ctk
 import tkinter as tk
+from tkinter import messagebox
 from typing import Optional
 import logging
 from pathlib import Path
+import sys
+import os
 
 from app.themes import ThemeManager
 from ui.main_window import MainWindow
@@ -28,31 +31,39 @@ class WorkflowBuilderApp:
         self.logger = logging.getLogger(__name__)
         self.logger.info("Initializing Workflow Builder Application")
         
-        # Initialize core components
+        # Initialize core components first
         self.theme_manager = ThemeManager()
         self.workflow_engine = WorkflowEngine()
         self.file_manager = FileManager()
         
-        # Set appearance mode and theme
-        ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
-        
-        # Initialize main window
+        # Initialize main window reference
         self.main_window: Optional[MainWindow] = None
         
+        # Setup application after component initialization
         self._setup_application()
     
     def _setup_application(self):
         """Setup the main application window and components."""
         try:
-            self.main_window = MainWindow(
-                theme_manager=self.theme_manager,
-                workflow_engine=self.workflow_engine,
-                file_manager=self.file_manager
-            )
+            # Set CustomTkinter appearance and theme before creating windows
+            ctk.set_appearance_mode("dark")
+            ctk.set_default_color_theme("blue")
             
-            # Setup window protocol handlers
-            self.main_window.protocol("WM_DELETE_WINDOW", self._on_closing)
+            # Create main window with error handling for macOS
+            try:
+                self.main_window = MainWindow(
+                    theme_manager=self.theme_manager,
+                    workflow_engine=self.workflow_engine,
+                    file_manager=self.file_manager
+                )
+                
+                # Setup window protocol handlers
+                self.main_window.protocol("WM_DELETE_WINDOW", self._on_closing)
+                
+            except Exception as window_error:
+                self.logger.error(f"Window creation failed: {window_error}")
+                # Re-raise the error to see what's happening
+                raise window_error
             
             self.logger.info("Application setup completed successfully")
             
@@ -66,7 +77,7 @@ class WorkflowBuilderApp:
         
         # Save current workflow if modified
         if self.main_window and self.main_window.canvas.has_unsaved_changes():
-            response = tk.messagebox.askyesnocancel(
+            response = messagebox.askyesnocancel(
                 "Unsaved Changes",
                 "You have unsaved changes. Do you want to save before closing?"
             )

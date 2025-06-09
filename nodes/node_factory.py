@@ -67,6 +67,10 @@ class NodeFactory:
         node_classes = get_all_subclasses(BaseNode)
         
         for node_class in node_classes:
+            # Skip abstract base classes
+            if node_class.__name__ in ['BaseNode', 'SimpleNode']:
+                continue
+            
             try:
                 # Get schema from the class
                 schema = node_class.get_schema()
